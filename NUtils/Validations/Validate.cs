@@ -44,5 +44,27 @@ namespace NUtils.Validations
                 throw new ArgumentException(message);
             }
         }
+
+        /// <summary>
+        /// Validates <paramref name="argument"/> is between <paramref name="rangeStart"/> and
+        /// <paramref name="rangeEnd"/> (both inclusive) or else throws <see cref="ArgumentOutOfRangeException"/>
+        /// with the tiven <paramref name="argumentName"/>.
+        /// </summary>
+        /// 
+        /// <param name="argument">The argument to validate.</param>
+        /// <param name="rangeStart">The start of the range to check (inclusive).</param>
+        /// <param name="rangeEnd">The end of the range to check (inclusive).</param>
+        /// <param name="argumentName">The name of the argument.</param>
+        /// 
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// If <paramref name="argument"/> is not between <paramref name="rangeStart"/> and <paramref name="rangeEnd"/>.
+        /// </exception>
+        public static void ArgumentInRange(int argument, int rangeStart, int rangeEnd, string argumentName)
+        {
+            if (rangeStart > argument || argument > rangeEnd)
+            {
+                throw new ArgumentOutOfRangeException(argumentName);
+            }
+        }
     }
 }

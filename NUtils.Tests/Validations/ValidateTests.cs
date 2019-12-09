@@ -54,6 +54,50 @@ namespace NUtils.Tests.Validations
             action.Should()
                 .ThrowExactly<ArgumentException>()
                 .WithMessage(message);
+     
+        }
+
+        [Test]
+        public void Test_Argument_In_Range()
+        {
+            int argument = default;
+            Action action = () => Validate.ArgumentInRange(
+                argument: argument,
+                rangeStart: 0,
+                rangeEnd: 20,
+                nameof(argument)
+            );
+
+            argument = 10;
+            action.Should().NotThrow();
+
+            argument = 0;
+            action.Should().NotThrow();
+
+            argument = 20;
+            action.Should().NotThrow();
+        }
+
+        [Test]
+        public void Test_Argument_Out_Of_Range()
+        {
+            int argument = default;
+            Action action = () => Validate.ArgumentInRange(
+                argument: argument,
+                rangeStart: 0,
+                rangeEnd: 20,
+                nameof(argument)
+            );
+
+            argument = -1;
+            action.Should()
+                .ThrowExactly<ArgumentOutOfRangeException>()
+                .WithMessage($"*{nameof(argument)}*");
+
+            argument = 21;
+            action.Should()
+                .ThrowExactly<ArgumentOutOfRangeException>()
+                .WithMessage($"*{nameof(argument)}*");
         }
     }
 }
