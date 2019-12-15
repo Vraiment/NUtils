@@ -2,8 +2,16 @@ language: bash
 solution: NUtils.sln
 os: windows
 install:
-  - choco install dotnetcore-sdk
+  - choco install dotnetcore-sdk nuget.commandline
   - dotnet.exe restore NUtils.sln
 script:
   - dotnet.exe build -c Release
   - dotnet.exe test -c Release NUtils.Tests/NUtils.Tests.csproj
+  - nuget pack -properties Configuration=Release NUtils/
+deploy:
+  provider: releases
+  api_key: $API_KEY
+  file: NUtils.$TRAVIS_TAG.nupkg
+  skip_cleanup: true
+  on:
+    tags: true
