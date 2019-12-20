@@ -13,56 +13,6 @@ namespace NUtils.Extensions
     public static class ArrayExtensions
     {
         /// <summary>
-        /// Executes <paramref name="action"/> for each element in
-        /// the input <paramref name="array"/> in order.
-        /// </summary>
-        /// 
-        /// <typeparam name="T">The type of the array.</typeparam>
-        /// 
-        /// <param name="array">The input array.</param>
-        /// <param name="action">The input action to execute.</param>
-        /// 
-        /// <exception cref="ArgumentNullException">
-        /// If either <paramref name="array"/> or <paramref name="action"/> are null.
-        /// </exception>
-        public static void ForEach<T>(this T[] array, Action<T> action)
-        {
-            Validate.ArgumentNotNull(array, nameof(array));
-            Validate.ArgumentNotNull(action, nameof(action));
-
-            foreach (T value in array)
-            {
-                action(value);
-            }
-        }
-
-        /// <summary>
-        /// Executes <paramref name="action"/> for each element in
-        /// the input <paramref name="array"/> in order and its 
-        /// corresponding index.
-        /// </summary>
-        /// 
-        /// <typeparam name="T">The type of the array.</typeparam>
-        /// 
-        /// <param name="array">The input array.</param>
-        /// <param name="action">The input action to execute.</param>
-        /// 
-        /// <exception cref="ArgumentNullException">
-        /// If either <paramref name="array"/> or <paramref name="action"/> are null.
-        /// </exception>
-        public static void ForEach<T>(this T[] array, Action<T, int> action)
-        {
-            Validate.ArgumentNotNull(array, nameof(array));
-            Validate.ArgumentNotNull(action, nameof(action));
-
-            int index = 0;
-            foreach (T value in array)
-            {
-                action(value, index++);
-            }
-        }
-
-        /// <summary>
         /// Gets the element at <paramref name="index"/> from <paramref name="array"/>.
         /// </summary>
         /// 
