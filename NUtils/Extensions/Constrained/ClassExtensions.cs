@@ -8,9 +8,9 @@
 using NUtils.Validations;
 using System;
 
-namespace NUtils.Extensions
+namespace NUtils.Extensions.Constrained
 {
-    public static class StructExtensions
+    public static class ClassExtensions
     {
         /// <summary>
         /// Executes the specified action in the input object.
@@ -30,16 +30,17 @@ namespace NUtils.Extensions
         /// </code>
         /// </example>
         /// 
-        /// <typeparam name="T">The type of the input object, must be a value type.</typeparam>
+        /// <typeparam name="T">The type of the input object, must be a reference type.</typeparam>
         /// 
         /// <param name="object">The input object.</param>
         /// <param name="action">The action to be executed.</param>
         /// 
         /// <returns>The input object.</returns>
         /// 
-        /// <exception cref="ArgumentNullException">If <paramref name="action"/> is null.</exception>
-        public static T Also<T>(this T @object, Action<T> action) where T : struct
+        /// <exception cref="ArgumentNullException">If <paramref name="object"/> or <paramref name="action"/> are null.</exception>
+        public static T Also<T>(this T @object, Action<T> action) where T : class
         {
+            Validate.ArgumentNotNull(@object, nameof(@object));
             Validate.ArgumentNotNull(action, nameof(action));
 
             action(@object);
@@ -51,7 +52,7 @@ namespace NUtils.Extensions
         /// Returns the result of executing the input function with the input object.
         /// </summary>
         /// 
-        /// <typeparam name="T">The type of the input object, must be a value type.</typeparam>
+        /// <typeparam name="T">The type of the input object, must be a reference type.</typeparam>
         /// <typeparam name="TResult">The type of the object to be returned.</typeparam>
         /// 
         /// <param name="object">The input object.</param>
@@ -59,9 +60,10 @@ namespace NUtils.Extensions
         /// 
         /// <returns>The result of executing the function with the input object.</returns>
         /// 
-        /// <exception cref="ArgumentNullException">If <paramref name="function"/> are null.</exception>
-        public static TResult Let<T, TResult>(this T @object, Func<T, TResult> function) where T : struct
+        /// <exception cref="ArgumentNullException">If <paramref name="object"/> or <paramref name="function"/> are null.</exception>
+        public static TResult Let<T, TResult>(this T @object, Func<T, TResult> function) where T : class
         {
+            Validate.ArgumentNotNull(@object, nameof(@object));
             Validate.ArgumentNotNull(function, nameof(function));
 
             return function(@object);
@@ -81,16 +83,17 @@ namespace NUtils.Extensions
         /// }
         /// </example>
         /// 
-        /// <typeparam name="T">The type of the input object, must be a value type.</typeparam>
+        /// <typeparam name="T">The type of the input object, must be a reference type.</typeparam>
         /// 
         /// <param name="object">The input object.</param>
         /// <param name="predicate">The predicate to be execute.</param>
         /// 
         /// <returns>The input object if the predicate is true for it, null otherwise.</returns>
         /// 
-        /// <exception cref="ArgumentNullException">If <paramref name="predicate"/> are null.</exception>
-        public static T? TakeIf<T>(this T @object, Predicate<T> predicate) where T : struct
+        /// <exception cref="ArgumentNullException">If <paramref name="object"/> or <paramref name="predicate"/> are null.</exception>
+        public static T TakeIf<T>(this T @object, Predicate<T> predicate) where T : class
         {
+            Validate.ArgumentNotNull(@object, nameof(@object));
             Validate.ArgumentNotNull(predicate, nameof(predicate));
 
             if (predicate(@object))
@@ -109,16 +112,17 @@ namespace NUtils.Extensions
         /// 
         /// This is an inverse version of <see cref="TakeReferenceIf"/>.
         /// 
-        /// <typeparam name="T">The type of the input object, must be a value type.</typeparam>
+        /// <typeparam name="T">The type of the input object, must be a reference type.</typeparam>
         /// 
         /// <param name="object">The input object.</param>
         /// <param name="predicate">The predicate to be execute.</param>
         /// 
         /// <returns>The input object if the predicate is false for it, null otherwise.</returns>
         /// 
-        /// <exception cref="ArgumentNullException">If <paramref name="predicate"/> are null.</exception>
-        public static T? TakeUnless<T>(this T @object, Predicate<T> predicate) where T : struct
+        /// <exception cref="ArgumentNullException">If <paramref name="object"/> or <paramref name="predicate"/> are null.</exception>
+        public static T TakeUnless<T>(this T @object, Predicate<T> predicate) where T : class
         {
+            Validate.ArgumentNotNull(@object, nameof(@object));
             Validate.ArgumentNotNull(predicate, nameof(predicate));
 
             if (!predicate(@object))

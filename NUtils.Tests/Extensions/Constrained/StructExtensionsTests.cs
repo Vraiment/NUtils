@@ -7,40 +7,32 @@
  */
 using FluentAssertions;
 using NUnit.Framework;
-using NUtils.Extensions;
+using NUtils.Extensions.Constrained;
 using System;
 
-namespace NUtils.Tests.Extensions
+namespace NUtils.Tests.Extensions.Constrained
 {
-    class ClassExtensionsTests
+    class StructExtensionsTests
     {
         #region Also method
         [Test]
         public void Test_Using_Also_In_An_Object()
         {
-            string expected = nameof(expected);
-            DummyClass instance = new DummyClass();
+            DummyStruct instance = new DummyStruct()
+            {
+                Value = nameof(DummyStruct)
+            };
+            string result = null;
 
-            instance.Also(inst => inst.Value = expected);
+            instance.Also(inst => result = inst.Value);
 
-            instance.Value.Should().BeSameAs(expected);
-        }
-
-        [Test]
-        public void Test_Using_Also_With_A_Null_Object()
-        {
-            DummyClass instance = null;
-            Action action = () => instance.Also(_ => { });
-
-            action.Should()
-                .ThrowExactly<ArgumentNullException>()
-                .WithMessage($"*object*");
+            result.Should().BeSameAs(instance.Value);
         }
 
         [Test]
         public void Test_Using_Also_With_A_Null_Action()
         {
-            DummyClass instance = new DummyClass();
+            DummyStruct instance = new DummyStruct();
             Action action = () => instance.Also(null);
 
             action.Should()
@@ -54,7 +46,7 @@ namespace NUtils.Tests.Extensions
         public void Test_Using_Let_In_An_Object()
         {
             string expected = nameof(expected);
-            DummyClass instance = new DummyClass()
+            DummyStruct instance = new DummyStruct()
             {
                 Value = expected
             };
@@ -65,21 +57,10 @@ namespace NUtils.Tests.Extensions
         }
 
         [Test]
-        public void Test_Using_Let_With_A_Null_Object()
-        {
-            DummyClass instance = null;
-            Action action = () => instance.Let(_ => (object)null);
-
-            action.Should()
-                .ThrowExactly<ArgumentNullException>()
-                .WithMessage($"*object*");
-        }
-
-        [Test]
         public void Test_Using_Let_With_A_Null_Function()
         {
-            DummyClass instance = new DummyClass();
-            Action action = () => instance.Let<DummyClass, object>(null);
+            DummyStruct instance = new DummyStruct();
+            Action action = () => instance.Let<DummyStruct, object>(null);
 
             action.Should()
                 .ThrowExactly<ArgumentNullException>()
@@ -91,44 +72,34 @@ namespace NUtils.Tests.Extensions
         [Test]
         public void Test_Using_TakeIf_With_A_True_Predicate()
         {
-            DummyClass instance = new DummyClass()
+            DummyStruct instance = new DummyStruct()
             {
                 Value = nameof(instance)
             };
 
-            DummyClass result = instance.TakeIf(inst => inst.Value.Length != 0);
+            DummyStruct? result = instance.TakeIf(inst => inst.Value.Length != 0);
 
-            result.Should().NotBeNull().And.BeSameAs(instance);
+            result.HasValue.Should().BeTrue();
+            result.Value.Should().Be(instance);
         }
 
         [Test]
         public void Test_Using_TakeIf_With_A_False_Predicate()
         {
-            DummyClass instance = new DummyClass()
+            DummyStruct instance = new DummyStruct()
             {
                 Value = nameof(instance)
             };
 
-            DummyClass result = instance.TakeIf(inst => inst.Value.Length == 0);
+            DummyStruct? result = instance.TakeIf(inst => inst.Value.Length == 0);
 
-            result.Should().BeNull();
-        }
-
-        [Test]
-        public void Test_Using_TakeIf_With_A_Null_Object()
-        {
-            DummyClass instance = null;
-            Action action = () => instance.TakeIf(_ => true);
-
-            action.Should()
-                .ThrowExactly<ArgumentNullException>()
-                .WithMessage($"*object*");
+            result.HasValue.Should().BeFalse();
         }
 
         [Test]
         public void Test_Using_TakeIf_With_A_Null_Predicate()
         {
-            DummyClass instance = new DummyClass();
+            DummyStruct instance = new DummyStruct();
             Action action = () => instance.TakeIf(null);
 
             action.Should()
@@ -141,44 +112,34 @@ namespace NUtils.Tests.Extensions
         [Test]
         public void Test_Using_TakeUnless_With_A_True_Predicate()
         {
-            DummyClass instance = new DummyClass()
+            DummyStruct instance = new DummyStruct()
             {
                 Value = nameof(instance)
             };
 
-            DummyClass result = instance.TakeUnless(inst => inst.Value.Length == 0);
+            DummyStruct? result = instance.TakeUnless(inst => inst.Value.Length == 0);
 
-            result.Should().NotBeNull().And.BeSameAs(instance);
+            result.HasValue.Should().BeTrue();
+            result.Value.Should().Be(instance);
         }
 
         [Test]
         public void Test_Using_TakeUnless_With_A_False_Predicate()
         {
-            DummyClass instance = new DummyClass()
+            DummyStruct instance = new DummyStruct()
             {
                 Value = nameof(instance)
             };
 
-            DummyClass result = instance.TakeUnless(inst => inst.Value.Length != 0);
+            DummyStruct? result = instance.TakeUnless(inst => inst.Value.Length != 0);
 
-            result.Should().BeNull();
-        }
-
-        [Test]
-        public void Test_Using_TakeUnless_With_A_Null_Object()
-        {
-            DummyClass instance = null;
-            Action action = () => instance.TakeUnless(_ => false);
-
-            action.Should()
-                .ThrowExactly<ArgumentNullException>()
-                .WithMessage($"*object*");
+            result.HasValue.Should().BeFalse();
         }
 
         [Test]
         public void Test_Using_TakeUnless_With_A_Null_Predicate()
         {
-            DummyClass instance = new DummyClass();
+            DummyStruct instance = new DummyStruct();
             Action action = () => instance.TakeUnless(null);
 
             action.Should()
@@ -187,7 +148,7 @@ namespace NUtils.Tests.Extensions
         }
         #endregion
 
-        class DummyClass
+        struct DummyStruct
         {
             public string Value { get; set; }
         }
