@@ -19,8 +19,8 @@ namespace NUtils.Tests.Extensions
         [Test]
         public void Test_For_Each_With_A_Dictionary()
         {
-            IReadOnlyDictionary<string, string> dictionary = SampleDictionaryWithClassKeys();
-            IReadOnlyDictionary<string, string> expected = SampleDictionaryWithClassKeys();
+            IReadOnlyDictionary<string, string> dictionary = SampleDictionary();
+            IReadOnlyDictionary<string, string> expected = SampleDictionary();
             ISet<string> keys = new HashSet<string>();
 
             dictionary.ForEach((key, value) => {
@@ -54,7 +54,7 @@ namespace NUtils.Tests.Extensions
         [Test]
         public void Test_For_Each_With_A_Null_Action()
         {
-            IReadOnlyDictionary<string, string> dictionary = SampleDictionaryWithClassKeys();
+            IReadOnlyDictionary<string, string> dictionary = SampleDictionary();
             Action action = () => dictionary.ForEach(null);
 
             action.Should()
@@ -63,158 +63,11 @@ namespace NUtils.Tests.Extensions
         }
         #endregion
 
-        #region Get method (keys with class types)
-        [Test]
-        public void Test_Get_With_A_Dictionary_With_Class_Keys()
-        {
-            IReadOnlyDictionary<string, string> dictionary = SampleDictionaryWithClassKeys();
-            IReadOnlyDictionary<string, string> expected = SampleDictionaryWithClassKeys();
-
-            foreach (KeyValuePair<string, string> pair in expected)
-            {
-                dictionary.Get(pair.Key).Should().Be(pair.Value);
-            }
-        }
-
-        [Test]
-        public void Test_Get_With_A_Null_Dictionary_With_Class_Keys()
-        {
-            IReadOnlyDictionary<string, string> dictionary = null;
-            Action action = () => dictionary.Get(string.Empty);
-
-            action.Should()
-                .ThrowExactly<ArgumentNullException>()
-                .WithMessage("*dictionary*");
-        }
-
-        [Test]
-        public void Test_Get_With_A_Null_Key()
-        {
-            IReadOnlyDictionary<string, string> dictionary = SampleDictionaryWithClassKeys();
-            Action action = () => dictionary.Get(null);
-
-            action.Should()
-                .ThrowExactly<ArgumentNullException>()
-                .WithMessage("*key*");
-        }
-        #endregion
-
-        #region GetOrElse method (keys with class types)
-        [Test]
-        public void Test_GetOrElse_With_A_Dictionary_With_Class_Keys()
-        {
-            IReadOnlyDictionary<string, string> dictionary = SampleDictionaryWithClassKeys();
-            IReadOnlyDictionary<string, string> expected = SampleDictionaryWithClassKeys();
-
-            foreach (KeyValuePair<string, string> pair in expected)
-            {
-                dictionary.GetOrElse(pair.Key, string.Empty).Should().Be(pair.Value);
-            }
-        }
-
-        [Test]
-        public void Test_GetOrElse_With_Key_Not_In_Dictionary_With_Class_Keys()
-        {
-            IReadOnlyDictionary<string, string> dictionary = SampleDictionaryWithClassKeys();
-            string expected = "Not found";
-
-            dictionary.GetOrElse(string.Empty, expected).Should().Be(expected);
-        }
-
-        [Test]
-        public void Test_GetOrElse_With_A_Null_Dictionary_With_Class_Keys()
-        {
-            IReadOnlyDictionary<string, string> dictionary = null;
-            Action action = () => dictionary.GetOrElse(string.Empty, string.Empty);
-
-            action.Should()
-                .ThrowExactly<ArgumentNullException>()
-                .WithMessage("*dictionary*");
-        }
-
-        [Test]
-        public void Test_GetOrElse_With_A_Null_Key()
-        {
-            IReadOnlyDictionary<string, string> dictionary = SampleDictionaryWithClassKeys();
-            Action action = () => dictionary.GetOrElse(null, string.Empty);
-
-            action.Should()
-                .ThrowExactly<ArgumentNullException>()
-                .WithMessage("*key*");
-        }
-        #endregion
-
-        #region Get method (keys with struct types)
-        [Test]
-        public void Test_Get_With_A_Dictionary_With_Struct_Keys()
-        {
-            IReadOnlyDictionary<int, string> dictionary = SampleDictionaryWithStructKeys();
-            IReadOnlyDictionary<int, string> expected = SampleDictionaryWithStructKeys();
-
-            foreach (KeyValuePair<int, string> pair in expected)
-            {
-                dictionary.Get(pair.Key).Should().Be(pair.Value);
-            }
-        }
-
-        [Test]
-        public void Test_Get_With_A_Null_Dictionary_With_Struct_Keys()
-        {
-            IReadOnlyDictionary<int, string> dictionary = null;
-            Action action = () => dictionary.Get(default);
-
-            action.Should()
-                .ThrowExactly<ArgumentNullException>()
-                .WithMessage("*dictionary*");
-        }
-        #endregion
-
-        #region GetOrElse method (keys with class types)
-        [Test]
-        public void Test_GetOrElse_With_A_Dictionary_With_Struct_Keys()
-        {
-            IReadOnlyDictionary<int, string> dictionary = SampleDictionaryWithStructKeys();
-            IReadOnlyDictionary<int, string> expected = SampleDictionaryWithStructKeys();
-
-            foreach (KeyValuePair<int, string> pair in expected)
-            {
-                dictionary.GetOrElse(pair.Key, string.Empty).Should().Be(pair.Value);
-            }
-        }
-
-        [Test]
-        public void Test_GetOrElse_With_Key_Not_In_Dictionary_With_Struct_Keys()
-        {
-            IReadOnlyDictionary<int, string> dictionary = SampleDictionaryWithStructKeys();
-            string expected = "Not found";
-
-            dictionary.GetOrElse(default, expected).Should().Be(expected);
-        }
-
-        [Test]
-        public void Test_GetOrElse_With_A_Null_Dictionary_With_Struct_Keys()
-        {
-            IReadOnlyDictionary<int, string> dictionary = null;
-            Action action = () => dictionary.GetOrElse(default, string.Empty);
-
-            action.Should()
-                .ThrowExactly<ArgumentNullException>()
-                .WithMessage("*dictionary*");
-        }
-        #endregion
-
-        private static IReadOnlyDictionary<string, string> SampleDictionaryWithClassKeys() => new Dictionary<string, string>
+        private static IReadOnlyDictionary<string, string> SampleDictionary() => new Dictionary<string, string>
         {
             ["key1"] = "value1",
             ["key2"] = "value2",
             ["key3"] = "value3"
-        };
-
-        private static IReadOnlyDictionary<int, string> SampleDictionaryWithStructKeys() => new Dictionary<int, string>
-        {
-            [10] = "value1",
-            [11] = "value2",
-            [12] = "value3"
         };
     }
 }
