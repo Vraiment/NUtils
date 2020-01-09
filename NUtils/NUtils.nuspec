@@ -9,7 +9,7 @@
     <projectUrl>https://github.com/Vraiment/NUtils</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Initial release.</releaseNotes>
+    <releaseNotes>Differentiate between constrained and unconstrained extension methods.</releaseNotes>
     <copyright>$copyright$</copyright>
   </metadata>
 </package>
