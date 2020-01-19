@@ -7,7 +7,8 @@ install:
 script:
   - dotnet.exe build -c Release
   - dotnet.exe test -c Release NUtils.Tests/NUtils.Tests.csproj
-  - nuget pack -properties Configuration=Release NUtils/
+  - dotnet.exe build -c "Release Signed"
+  - nuget pack -properties Configuration="Release Signed" NUtils/
 deploy:
   provider: releases
   api_key: $API_KEY

@@ -15,19 +15,27 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug Signed|Any CPU = Debug Signed|Any CPU
 		Debug|Any CPU = Debug|Any CPU
+		Release Signed|Any CPU = Release Signed|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{44F9F37D-18CA-4157-A55E-331D3058E024}.Debug Signed|Any CPU.ActiveCfg = Debug Signed|Any CPU
+		{44F9F37D-18CA-4157-A55E-331D3058E024}.Debug Signed|Any CPU.Build.0 = Debug Signed|Any CPU
 		{44F9F37D-18CA-4157-A55E-331D3058E024}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{44F9F37D-18CA-4157-A55E-331D3058E024}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44F9F37D-18CA-4157-A55E-331D3058E024}.Release Signed|Any CPU.ActiveCfg = Release Signed|Any CPU
+		{44F9F37D-18CA-4157-A55E-331D3058E024}.Release Signed|Any CPU.Build.0 = Release Signed|Any CPU
 		{44F9F37D-18CA-4157-A55E-331D3058E024}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44F9F37D-18CA-4157-A55E-331D3058E024}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEB88C49-053D-4064-9079-1869A52BA55F}.Debug Signed|Any CPU.ActiveCfg = Debug|Any CPU
 		{DEB88C49-053D-4064-9079-1869A52BA55F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DEB88C49-053D-4064-9079-1869A52BA55F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEB88C49-053D-4064-9079-1869A52BA55F}.Release Signed|Any CPU.ActiveCfg = Release|Any CPU
 		{DEB88C49-053D-4064-9079-1869A52BA55F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEB88C49-053D-4064-9079-1869A52BA55F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
