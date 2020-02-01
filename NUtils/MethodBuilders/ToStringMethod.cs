@@ -5,7 +5,10 @@
  * If a copy of the MIT license was not distributed with this file,
  * You can obtain one at https://opensource.org/licenses/MIT.
  */
-using System;
+using NUtils.MethodBuilders.ToString;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace NUtils.MethodBuilders
 {
@@ -32,6 +35,18 @@ namespace NUtils.MethodBuilders
     /// </typeparam>
     public sealed class ToStringMethodBuilder<T>
     {
+        private bool useProperties = false;
+
+        /// <summary>
+        /// Signals the method builder should use the properties in the type.
+        /// </summary>
+        public ToStringMethodBuilder<T> UseProperties()
+        {
+            useProperties = true;
+
+            return this;
+        }
+
         /// <summary>
         /// Builds a new <see cref="ToStringMethod{T}"/>.
         /// </summary>
@@ -41,7 +56,22 @@ namespace NUtils.MethodBuilders
         /// </returns>
         public ToStringMethod<T> Build()
         {
-            throw new NotImplementedException();
+            List<IValue> values = new List<IValue>();
+
+            if (useProperties)
+            {
+                values.AddRange(GetPropertiesAsValues());
+            }
+
+            Expression<ToStringMethod<T>> toStringExpression = new ToStringExpressionBuilder()
+                .WithValues(values)
+                .BuildForType<T>();
+
+            return toStringExpression.Compile();
         }
+
+        private static IEnumerable<IValue> GetPropertiesAsValues() => typeof(T)
+            .GetProperties()
+            .Select(property => new PropertyValue(property));
     }
 }
