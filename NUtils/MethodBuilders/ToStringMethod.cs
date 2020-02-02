@@ -78,7 +78,14 @@ namespace NUtils.MethodBuilders
 
         private static Expression AppendExpressionOfType(Expression stringBuilder, Type type, Expression value)
         {
-            return ObjectAppender.AppendExpression(stringBuilder, value);
+            if (PrimitiveAppender.CanAppendType(type))
+            {
+                return PrimitiveAppender.AppendExpressionOfType(stringBuilder, type, value);
+            }
+            else
+            {
+                return ObjectAppender.AppendExpression(stringBuilder, value);
+            }
         }
     }
 }

@@ -31,9 +31,9 @@ namespace NUtils.Tests.MethodBuilders
         }
         #endregion
 
-        #region Boolean test cases
-        [TestCaseSource(nameof(BooleanTestCases))]
-        public void Test_ToString_Method_For_Type_With_Boolean_Property<T>(TestCase<T> testCase)
+        #region Primitive test cases
+        [TestCaseSource(nameof(PrimitiveTestCases))]
+        public void Test_ToString_Method_For_Type_With_Primitive_Property<T>(TestCase<T> testCase)
         {
             ToStringMethod<T> toStringMethod = new ToStringMethodBuilder<T>()
                 .UseProperties()
@@ -44,7 +44,7 @@ namespace NUtils.Tests.MethodBuilders
             result.Should().Be(testCase.Expected);
         }
 
-        static object[] BooleanTestCases() => new object[]
+        static object[] PrimitiveTestCases() => new object[]
         {
             new TestCase<PropertyOfType<bool>>(
                 instance: new PropertyOfType<bool>(true),
@@ -55,6 +55,51 @@ namespace NUtils.Tests.MethodBuilders
                 instance: new PropertyOfType<bool>(false),
                 expected: "{Value=False}",
                 description: "Creating a string for a class with a bool property with value \"false\""
+            ),
+            new TestCase<PropertyOfType<byte>>(
+                instance: new PropertyOfType<byte>(34),
+                expected: "{Value=34}",
+                description: "Creating a string for a class with a byte property with value \"34\""
+            ),
+            new TestCase<PropertyOfType<short>>(
+                instance: new PropertyOfType<short>(32000),
+                expected: "{Value=32000}",
+                description: "Creating a string for a class with a short property with value \"32000\""
+            ),
+            new TestCase<PropertyOfType<ushort>>(
+                instance: new PropertyOfType<ushort>(65000),
+                expected: "{Value=65000}",
+                description: "Creating a string for a class with an ushort property with value \"65000\""
+            ),
+            new TestCase<PropertyOfType<int>>(
+                instance: new PropertyOfType<int>(2000000000),
+                expected: "{Value=2000000000}",
+                description: "Creating a string for a class with an int property with value \"2000000000\""
+            ),
+            new TestCase<PropertyOfType<uint>>(
+                instance: new PropertyOfType<uint>(4000000000),
+                expected: "{Value=4000000000}",
+                description: "Creating a string for a class with an uint property with value \"4000000000\""
+            ),
+            new TestCase<PropertyOfType<long>>(
+                instance: new PropertyOfType<long>(9000000000000000000),
+                expected: "{Value=9000000000000000000}",
+                description: "Creating a string for a class with a long property with value \"9000000000000000000\""
+            ),
+            new TestCase<PropertyOfType<ulong>>(
+                instance: new PropertyOfType<ulong>(18000000000000000000),
+                expected: "{Value=18000000000000000000}",
+                description: "Creating a string for a class with an ulong property with value \"18000000000000000000\""
+            ),
+            new TestCase<PropertyOfType<float>>(
+                instance: new PropertyOfType<float>(1.5f),
+                expected: "{Value=1.5}",
+                description: "Creating a string for a class with a float property with value \"1.5\""
+            ),
+            new TestCase<PropertyOfType<double>>(
+                instance: new PropertyOfType<double>(5.6),
+                expected: "{Value=5.6}",
+                description: "Creating a string for a class with an double property with value \"5.6\""
             )
         };
         #endregion

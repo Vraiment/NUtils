@@ -25,6 +25,36 @@ namespace NUtils.MethodBuilders.ToString
             public static readonly ConstructorInfo EmptyConstructor
                 = typeof(RealStringBuilder).GetConstructor(Array.Empty<Type>());
 
+            public static readonly MethodInfo AppendBoolMethod
+                = GetAppendMethod<bool>();
+
+            public static readonly MethodInfo AppendByteMethod
+                = GetAppendMethod<byte>();
+
+            public static readonly MethodInfo AppendShortMethod
+                = GetAppendMethod<short>();
+
+            public static readonly MethodInfo AppendUnsignedShortMethod
+                = GetAppendMethod<ushort>();
+
+            public static readonly MethodInfo AppendIntMethod
+                = GetAppendMethod<int>();
+
+            public static readonly MethodInfo AppendUnsignedIntMethod
+                = GetAppendMethod<uint>();
+
+            public static readonly MethodInfo AppendLongMethod
+                = GetAppendMethod<long>();
+
+            public static readonly MethodInfo AppendUnsignedLongMethod
+                = GetAppendMethod<ulong>();
+
+            public static readonly MethodInfo AppendFloatMethod
+                = GetAppendMethod<float>();
+
+            public static readonly MethodInfo AppendDoubleMethod
+                = GetAppendMethod<double>();
+
             public static readonly MethodInfo AppendStringMethod
                 = GetAppendMethod<string>();
 
