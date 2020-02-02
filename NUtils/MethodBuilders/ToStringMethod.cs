@@ -82,6 +82,10 @@ namespace NUtils.MethodBuilders
             {
                 return PrimitiveAppender.AppendExpressionOfType(stringBuilder, type, value);
             }
+            else if (type == typeof(char))
+            {
+                return CharAppender.AppendExpression(stringBuilder, value);
+            }
             else
             {
                 return ObjectAppender.AppendExpression(stringBuilder, value);

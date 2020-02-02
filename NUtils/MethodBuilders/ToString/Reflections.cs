@@ -55,6 +55,9 @@ namespace NUtils.MethodBuilders.ToString
             public static readonly MethodInfo AppendDoubleMethod
                 = GetAppendMethod<double>();
 
+            public static readonly MethodInfo AppendCharMethod
+                = GetAppendMethod<char>();
+
             public static readonly MethodInfo AppendStringMethod
                 = GetAppendMethod<string>();
 

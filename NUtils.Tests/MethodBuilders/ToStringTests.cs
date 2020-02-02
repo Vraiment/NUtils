@@ -104,6 +104,39 @@ namespace NUtils.Tests.MethodBuilders
         };
         #endregion
 
+        #region Char test cases
+        [TestCaseSource(nameof(CharTestCases))]
+        public void Test_ToString_Method_For_Type_With_Char_Property<T>(TestCase<T> testCase)
+        {
+            ToStringMethod<T> toStringMethod = new ToStringMethodBuilder<T>()
+                .UseProperties()
+                .Build();
+
+            string result = toStringMethod(testCase.Instance);
+
+            result.Should().Be(testCase.Expected);
+        }
+
+        static object[] CharTestCases() => new object[]
+        {
+            new TestCase<PropertyOfType<char>>(
+                instance: new PropertyOfType<char>('a'),
+                expected: "{Value='a'}",
+                description: "Creating a string for a class with a char with value \"a\""
+            ),
+            new TestCase<PropertyOfType<char>>(
+                instance: new PropertyOfType<char>('\''),
+                expected: "{Value='\\''}",
+                description: "Creating a string for a class with a char with value \"'\""
+            ),
+            new TestCase<PropertyOfType<char>>(
+                instance: new PropertyOfType<char>('\\'),
+                expected: "{Value='\\\\'}",
+                description: "Creating a string for a class with a char with value \"\\\""
+            )
+        };
+        #endregion
+
         #region Class with multiple values test cases
         [Test]
         public void Test_ToString_MethodWith_A_Class_With_Multiple_Values()
