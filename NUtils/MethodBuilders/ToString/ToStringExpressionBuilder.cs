@@ -5,19 +5,31 @@
  * If a copy of the MIT license was not distributed with this file,
  * You can obtain one at https://opensource.org/licenses/MIT.
  */
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 
 namespace NUtils.MethodBuilders.ToString
 {
+    internal delegate Expression AppendExpressionOfType(Expression stringBuilder, Type type, Expression value);
+
     internal class ToStringExpressionBuilder
     {
         private readonly List<IValue> values = new List<IValue>();
 
+        private AppendExpressionOfType appendExpressionOfType;
+
         public ToStringExpressionBuilder WithValues(IEnumerable<IValue> values)
         {
             this.values.AddRange(values);
+
+            return this;
+        }
+
+        public ToStringExpressionBuilder WithAppender(AppendExpressionOfType appender)
+        {
+            appendExpressionOfType = appender;
 
             return this;
         }
@@ -48,12 +60,11 @@ namespace NUtils.MethodBuilders.ToString
                 bodyExpressions.Add(expression);
             }
 
-            void addStringBuilderAppendObject(Expression expression)
+            void addStringBuilderAppendValue(IValue value)
             {
-                expression = Expression.Convert(expression, typeof(object));
-                expression = Expression.Call(stringBuilder, Reflections.StringBuilder.AppendObjectMethod, expression);
+                Expression valueExpression = value.BuildExpression(thisParameter);
 
-                bodyExpressions.Add(expression);
+                bodyExpressions.Add(appendExpressionOfType(stringBuilder, value.Type, valueExpression));
             }
 
             bodyExpressions.Add(Expression.Assign(stringBuilder, Expression.New(Reflections.StringBuilder.EmptyConstructor)));
@@ -61,12 +72,12 @@ namespace NUtils.MethodBuilders.ToString
             addStringBuilderAppendString(Expression.Constant("{", typeof(string)));
 
             addStringBuilderAppendString(Expression.Constant($"{values[0].Name}=", typeof(string)));
-            addStringBuilderAppendObject(values[0].BuildExpression(thisParameter));
+            addStringBuilderAppendValue(values[0]);
 
             for (int n = 1; n < values.Count; ++n)
             {
                 addStringBuilderAppendString(Expression.Constant($", {values[n].Name}=", typeof(string)));
-                addStringBuilderAppendObject(values[n].BuildExpression(thisParameter));
+                addStringBuilderAppendValue(values[n]);
             }
 
             addStringBuilderAppendString(Expression.Constant("}"));

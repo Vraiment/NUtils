@@ -6,6 +6,7 @@
  * You can obtain one at https://opensource.org/licenses/MIT.
  */
 using NUtils.MethodBuilders.ToString;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -65,6 +66,7 @@ namespace NUtils.MethodBuilders
 
             Expression<ToStringMethod<T>> toStringExpression = new ToStringExpressionBuilder()
                 .WithValues(values)
+                .WithAppender(AppendExpressionOfType)
                 .BuildForType<T>();
 
             return toStringExpression.Compile();
@@ -73,5 +75,10 @@ namespace NUtils.MethodBuilders
         private static IEnumerable<IValue> GetPropertiesAsValues() => typeof(T)
             .GetProperties()
             .Select(property => new PropertyValue(property));
+
+        private static Expression AppendExpressionOfType(Expression stringBuilder, Type type, Expression value)
+        {
+            return ObjectAppender.AppendExpression(stringBuilder, value);
+        }
     }
 }
