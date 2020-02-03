@@ -137,6 +137,39 @@ namespace NUtils.Tests.MethodBuilders
         };
         #endregion
 
+        #region String test cases
+        [TestCaseSource(nameof(StringTestCases))]
+        public void Test_ToString_Method_For_Type_With_String_Property<T>(TestCase<T> testCase)
+        {
+            ToStringMethod<T> toStringMethod = new ToStringMethodBuilder<T>()
+                .UseProperties()
+                .Build();
+
+            string result = toStringMethod(testCase.Instance);
+
+            result.Should().Be(testCase.Expected);
+        }
+
+        static object[] StringTestCases() => new object[]
+        {
+            new TestCase<PropertyOfType<string>>(
+                instance: new PropertyOfType<string>(null),
+                expected: "{Value=}",
+                description: "Creating a string for a class with a string property with value null"
+            ),
+            new TestCase<PropertyOfType<string>>(
+                instance: new PropertyOfType<string>(string.Empty),
+                expected: "{Value=\"\"}",
+                description: "Creating a string for a class with a string property with value \"\""
+            ),
+            new TestCase<PropertyOfType<string>>(
+                instance: new PropertyOfType<string>("any value"),
+                expected: "{Value=\"any value\"}",
+                description: "Creating a string for a class with a string property with value \"any value\""
+            )
+        };
+        #endregion
+
         #region Class with multiple values test cases
         [Test]
         public void Test_ToString_MethodWith_A_Class_With_Multiple_Values()

@@ -20,6 +20,12 @@ namespace NUtils.MethodBuilders.ToString
                 = typeof(object).GetMethod(nameof(object.ToString));
         }
 
+        public static class String
+        {
+            public static readonly MethodInfo ReplaceMethod = typeof(string)
+                .GetMethod(nameof(string.Replace), new Type[] { typeof(string), typeof(string) });
+        }
+
         public static class StringBuilder
         {
             public static readonly ConstructorInfo EmptyConstructor
