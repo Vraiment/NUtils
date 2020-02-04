@@ -6,6 +6,7 @@
  * You can obtain one at https://opensource.org/licenses/MIT.
  */
 using System;
+using System.Collections;
 using System.Reflection;
 
 using RealStringBuilder = System.Text.StringBuilder;
@@ -18,6 +19,12 @@ namespace NUtils.MethodBuilders.ToString
         {
             public static readonly MethodInfo ToStringMethod
                 = typeof(object).GetMethod(nameof(object.ToString));
+        }
+
+        public static class Enumerator
+        {
+            public static readonly MethodInfo MoveNextMethod = typeof(IEnumerator)
+                .GetMethod(nameof(IEnumerator.MoveNext));
         }
 
         public static class String

@@ -28,7 +28,7 @@ namespace NUtils.MethodBuilders.ToString
             }
             else
             {
-                return ObjectAppender.AppendExpression(stringBuilder, value);
+                return ObjectAppender.AppendExpression(stringBuilder, type, value);
             }
         }
     }

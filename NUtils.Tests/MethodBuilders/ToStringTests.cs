@@ -147,6 +147,46 @@ namespace NUtils.Tests.MethodBuilders
         };
         #endregion
 
+        #region Any objects test cases
+        [TestCaseSource(nameof(StringTestCases))]
+        public void Test_ToString_Method_For_Type_With_Any_Property<T>(TestCase<T> testCase)
+            => testCase.Execute(builder => builder.UseProperties());
+
+        static object[] AnyTestCases() => new object[]
+        {
+            TestCase.ForProperty<StructWithToString>(
+                instance: new StructWithToString(),
+                expected: "{Value=This is a struct}",
+                description: "Creating a string for a class with a struct property"
+            ),
+            TestCase.ForProperty<ClassWithToString>(
+                instance: new ClassWithToString(),
+                expected: "{Value=This is a class}",
+                description: "Creating a string for a class with a class property"
+            ),
+            TestCase.ForProperty<object>(
+                instance: new ClassWithToString(),
+                expected: "{Value=This is a class}",
+                description: "Creating a string for a class with an object property with with some value"
+            ),
+            TestCase.ForProperty<object>(
+                instance: null,
+                expected: "{Value=}",
+                description: "Creating a string for a class with an object property with null value"
+            )
+        };
+
+        struct StructWithToString
+        {
+            public override string ToString() => "This is a struct";
+        }
+
+        class ClassWithToString
+        {
+            public override string ToString() => "This is a class";
+        }
+        #endregion
+
         #region Class with multiple values test cases
         [Test]
         public void Test_ToString_MethodWith_A_Class_With_Multiple_Values()
