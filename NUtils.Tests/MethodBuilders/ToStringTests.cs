@@ -187,6 +187,63 @@ namespace NUtils.Tests.MethodBuilders
         }
         #endregion
 
+        #region Substitution tests
+        [TestCaseSource(nameof(SubstitutionTestCases))]
+        public void Test_ToString_Method_With_A_Property_That_Gets_Replaced<T>(TestCase<T> testCase)
+            => testCase.Execute(builder => builder.UseProperties());
+
+        static object[] SubstitutionTestCases() => new object[]
+        {
+            TestCase.ForProperty<int>(
+                instance: 99,
+                expected: "{Value=Replaced value 99}",
+                description: "Creating a string for a class with an int property that gets replaced with a function that takes an int",
+                configuration: builder => builder.Substitute<int>(
+                    nameof(PropertyOfType<int>.Value),
+                    value => $"Replaced value {value}"
+                )
+            ),
+            TestCase.ForProperty<Type>(
+                instance: typeof(object),
+                expected: $"{{Value=The type name is: {typeof(object).Name}}}",
+                description: "Creating a string for a class with a Type property that gets replaced with a function that takes an object",
+                configuration: builder => builder.Substitute<object>(
+                    nameof(PropertyOfType<Type>.Value),
+                    value => $"The type name is: {(value as Type)?.Name}"
+                )
+            )
+        };
+
+        [Test]
+        public void Test_ToString_Method_Substituting_A_Value_That_Doesnt_Exists()
+        {
+            string falseName = nameof(falseName);
+            Action action = () => new ToStringMethodBuilder<object>()
+                .Substitute<object>(falseName, _ => string.Empty)
+                .Build();
+
+            action.Should()
+                .ThrowExactly<InvalidOperationException>()
+                .WithMessage($"Cannot substitute member named \"{falseName}\" because it doesn't exists in type \"{typeof(object).Name}\"");
+        }
+
+        [Test]
+        public void Test_ToString_Method_Substituting_A_Value_With_Incorrect_Type()
+        {
+            string name = nameof(PropertyOfType<string>.Value);
+            Action action = () => new ToStringMethodBuilder<PropertyOfType<string>>()
+                .Substitute<int>(name, _ => string.Empty)
+                .Build();
+
+            action.Should()
+                .ThrowExactly<InvalidOperationException>()
+                .WithMessage(
+                    $"Cannot substitute member named \"{name}\" because can't be converted from " +
+                    $"type \"{typeof(string).Name}\" to type \"{typeof(int).Name}\""
+                );
+        }
+        #endregion
+
         #region Class with multiple values test cases
         [Test]
         public void Test_ToString_MethodWith_A_Class_With_Multiple_Values()
@@ -232,17 +289,29 @@ namespace NUtils.Tests.MethodBuilders
         {
             public static TestCase<PropertyOfType<T>> ForProperty<T>(T instance, string expected, string description)
                 => new TestCase<PropertyOfType<T>>(instance, expected, description);
+
+            public static TestCase<PropertyOfType<T>> ForProperty<T>(
+                T instance, string expected, string description, Action<ToStringMethodBuilder<PropertyOfType<T>>> configuration
+            ) => new TestCase<PropertyOfType<T>>(instance, expected, description, configuration);
         }
 
         public class TestCase<T>
         {
             private readonly string description;
 
+            private readonly Action<ToStringMethodBuilder<T>> configureToStringMethod;
+
             public TestCase(T instance, string expected, string description)
             {
                 Instance = instance;
                 Expected = expected;
                 this.description = description;
+            }
+
+            public TestCase(T instance, string expected, string description, Action<ToStringMethodBuilder<T>> configuration)
+                : this(instance, expected, description)
+            {
+                configureToStringMethod = configuration;
             }
 
             public T Instance { get; }
@@ -255,8 +324,8 @@ namespace NUtils.Tests.MethodBuilders
             {
                 ToStringMethodBuilder<T> builder = new ToStringMethodBuilder<T>();
 
+                this.configureToStringMethod?.Invoke(builder);
                 configureToStringMethod(builder);
-
 
                 ToStringMethod<T> toStringMethod = builder.Build();
 

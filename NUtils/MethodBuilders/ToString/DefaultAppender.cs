@@ -26,6 +26,10 @@ namespace NUtils.MethodBuilders.ToString
             {
                 return StringAppender.AppendExpression(stringBuilder, value);
             }
+            else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(SubstituteValue<>))
+            {
+                return Expression.Call(stringBuilder, Reflections.StringBuilder.AppendStringMethod, value);
+            }
             else
             {
                 return ObjectAppender.AppendExpression(stringBuilder, type, value);
