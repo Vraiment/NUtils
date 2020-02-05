@@ -40,6 +40,8 @@ namespace NUtils.MethodBuilders
     {
         private bool useProperties = false;
 
+        private readonly HashSet<string> ignoredMembers = new HashSet<string>();
+
         private readonly Dictionary<string, Delegate> namedSubstitutes = new Dictionary<string, Delegate>();
 
         /// <summary>
@@ -86,6 +88,31 @@ namespace NUtils.MethodBuilders
         }
 
         /// <summary>
+        /// Ignores the members with the names listed in <paramref name="names"/>.
+        /// </summary>
+        /// 
+        /// <param name="names">The names of the members to ignore.</param>
+        /// 
+        /// <returns>The same instance of <see cref="ToStringMethodBuilder{T}"/>.</returns>
+        /// 
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="names"/> is null.
+        /// </exception>
+        public ToStringMethodBuilder<T> Ignore(params string[] names)
+        {
+            Validate.ArgumentNotNull(names, nameof(names));
+
+            foreach (string name in names)
+            {
+                Validate.Argument(name != null, "A name cannot be null");
+
+                ignoredMembers.Add(name);
+            }
+
+            return this;
+        }
+
+        /// <summary>
         /// Builds a new <see cref="ToStringMethod{T}"/>.
         /// </summary>
         /// 
@@ -95,6 +122,7 @@ namespace NUtils.MethodBuilders
         public ToStringMethod<T> Build()
         {
             ValidateSubstitutions();
+            ValidateIgnoredMembers();
 
             List<IValue> values = new List<IValue>();
 
@@ -109,6 +137,32 @@ namespace NUtils.MethodBuilders
                 .BuildForType<T>();
 
             return toStringExpression.Compile();
+        }
+
+        private IEnumerable<IValue> GetPropertiesAsValues() => typeof(T)
+            .GetProperties()
+            .Where(ShouldIgnoreProperty)
+            .Select(property => new PropertyValue(property));
+
+        private bool ShouldIgnoreProperty(PropertyInfo property)
+            => property.GetCustomAttribute<ToStringMethodIgnore>() == null && !ignoredMembers.Contains(property.Name);
+
+        private void ValidateIgnoredMembers()
+        {
+            HashSet<string> propertyNames = new HashSet<string>(
+                typeof(T).GetProperties().Select(property => property.Name)
+            );
+
+            foreach (string ignoredMember in ignoredMembers)
+            {
+                if (!propertyNames.Contains(ignoredMember))
+                {
+                    throw new InvalidOperationException(
+                        $"Cannot ignore member named \"{ignoredMember}\" because it doesn't " +
+                        $"exist in type \"{typeof(T).Name}\""
+                    );
+                }
+            }
         }
 
         private void ValidateSubstitutions()
@@ -151,9 +205,13 @@ namespace NUtils.MethodBuilders
                 return value;
             }
         }
+    }
 
-        private static IEnumerable<IValue> GetPropertiesAsValues() => typeof(T)
-            .GetProperties()
-            .Select(property => new PropertyValue(property));
+    /// <summary>
+    /// Attribute to signal a member that shouldn't be used for bulding a <see cref="ToStringMethod{T}"/>.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
+    public sealed class ToStringMethodIgnore : Attribute
+    {
     }
 }

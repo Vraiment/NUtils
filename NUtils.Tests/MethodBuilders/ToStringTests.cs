@@ -244,6 +244,77 @@ namespace NUtils.Tests.MethodBuilders
         }
         #endregion
 
+        #region Ignore tests
+        [TestCaseSource(nameof(IgnoreTestsCases))]
+        public void Test_ToString_With_Ignored_Properties<T>(TestCase<T> testCase)
+            => testCase.Execute(builder => builder.UseProperties());
+
+        static object[] IgnoreTestsCases() => new object[]
+        {
+            new TestCase<ClassWithIgnoredProperty>(
+                instance: new ClassWithIgnoredProperty
+                {
+                    Value = "my value"
+                },
+                expected: "{Value=\"my value\"}",
+                description: "Creating a string for a class with a property marked to be ignored"
+            ),
+            TestCase.ForProperty<int>(
+                instance: 99,
+                expected: "{}",
+                description: "Creating a string for a class with a property configured to be ignored",
+                configuration: builder => builder.Ignore(nameof(PropertyOfType<int>.Value))
+            )
+        };
+
+        class ClassWithIgnoredProperty
+        {
+            public string Value { get; set; }
+
+            [ToStringMethodIgnore]
+            public int Ignored => throw new InvalidOperationException();
+        }
+
+        [Test]
+        public void Test_ToString_Method_Ignoring_Unexisting_Property()
+        {
+            Action action = () => new ToStringMethodBuilder<object>()
+                .Ignore(nameof(action))
+                .Build();
+
+            action.Should()
+                .ThrowExactly<InvalidOperationException>()
+                .WithMessage(
+                    $"Cannot ignore member named \"{nameof(action)}\" because it doesn't " +
+                    $"exist in type \"{typeof(object).Name}\""
+                );
+        }
+
+        [Test]
+        public void Test_ToString_Method_Ignoring_Null_List_Of_Names()
+        {
+            Action action = () => new ToStringMethodBuilder<object>()
+                .Ignore(null)
+                .Build();
+
+            action.Should()
+                .ThrowExactly<ArgumentNullException>()
+                .WithMessage("*names*");
+        }
+
+        [Test]
+        public void Test_ToString_Method_Ignoring_Null_Name()
+        {
+            Action action = () => new ToStringMethodBuilder<object>()
+                .Ignore(new string[] { null })
+                .Build();
+
+            action.Should()
+                .ThrowExactly<ArgumentException>()
+                .WithMessage("A name cannot be null");
+        }
+        #endregion
+
         #region Class with multiple values test cases
         [Test]
         public void Test_ToString_MethodWith_A_Class_With_Multiple_Values()
