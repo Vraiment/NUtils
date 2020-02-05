@@ -40,6 +40,8 @@ namespace NUtils.MethodBuilders
         /// <summary>
         /// Signals the method builder should use the properties in the type.
         /// </summary>
+        /// 
+        /// <returns>The same instance of <see cref="ToStringMethodBuilder{T}"/>.</returns>
         public ToStringMethodBuilder<T> UseProperties()
         {
             useProperties = true;

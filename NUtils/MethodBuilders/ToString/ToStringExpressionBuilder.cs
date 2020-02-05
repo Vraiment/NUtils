@@ -14,7 +14,7 @@ namespace NUtils.MethodBuilders.ToString
 {
     internal delegate Expression AppendExpressionOfType(Expression stringBuilder, Type type, Expression value);
 
-    internal class ToStringExpressionBuilder
+    internal sealed class ToStringExpressionBuilder
     {
         private readonly List<IValue> values = new List<IValue>();
 
