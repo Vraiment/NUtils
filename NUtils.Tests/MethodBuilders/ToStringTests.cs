@@ -9,6 +9,8 @@ using FluentAssertions;
 using NUnit.Framework;
 using NUtils.MethodBuilders;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace NUtils.Tests.MethodBuilders
 {
@@ -313,6 +315,45 @@ namespace NUtils.Tests.MethodBuilders
                 .ThrowExactly<ArgumentException>()
                 .WithMessage("A name cannot be null");
         }
+        #endregion
+
+        #region Unsupposed tests
+        [TestCaseSource(nameof(UnsupportedTestsCases))]
+        public void Test_ToString_Method_With_A_Type_That_Has_Unsupported_Properties<T>(TestCase<T> testCase)
+        {
+            Action action = () => testCase.Execute(builder => builder.UseProperties());
+
+            action.Should()
+                .ThrowExactly<NotSupportedException>()
+                .WithMessage(testCase.Expected);
+        }
+
+        static readonly string UnsupportedMessage = $"Cannot generate ToString() for type {typeof(object).Name} or for " +
+            $"any implementation of {typeof(IEnumerable<>).Name} or {typeof(IEnumerable)}";
+
+        static object[] UnsupportedTestsCases() => new object[]
+        {
+            TestCase.ForProperty<object>(
+                instance: new object(),
+                expected: UnsupportedMessage,
+                description: "Creating a string for a class with a property of type object"
+            ),
+            TestCase.ForProperty<object>(
+                instance: null,
+                expected: UnsupportedMessage,
+                description: "Creating a string for a class with a property of type object with value null"
+            ),
+            TestCase.ForProperty<IEnumerable<int>>(
+                instance: new int[] { },
+                expected: UnsupportedMessage,
+                description: "Creating a string for a class with a property of type IEnumerable<>"
+            ),
+            TestCase.ForProperty<IEnumerable>(
+                instance: new int[] { },
+                expected: UnsupportedMessage,
+                description: "Creating a string for a class with a property of type IEnumerable<>"
+            )
+        };
         #endregion
 
         #region Class with multiple values test cases

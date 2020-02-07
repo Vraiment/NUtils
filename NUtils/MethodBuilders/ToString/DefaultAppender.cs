@@ -30,6 +30,10 @@ namespace NUtils.MethodBuilders.ToString
             {
                 return Expression.Call(stringBuilder, Reflections.StringBuilder.AppendStringMethod, value);
             }
+            else if (UnsupportedAppended.CanAppendType(type))
+            {
+                return UnsupportedAppended.AppendExpression(stringBuilder, type, value);
+            }
             else
             {
                 return ObjectAppender.AppendExpression(stringBuilder, type, value);
