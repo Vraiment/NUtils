@@ -234,6 +234,7 @@ namespace NUtils.Tests.MethodBuilders
         {
             string name = nameof(PropertyOfType<string>.Value);
             Action action = () => new ToStringMethodBuilder<PropertyOfType<string>>()
+                .UseProperties()
                 .Substitute<int>(name, _ => string.Empty)
                 .Build();
 

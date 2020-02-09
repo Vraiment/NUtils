@@ -43,12 +43,26 @@ namespace NUtils.MethodBuilders
         {
             Type toStringMethodType = substituteMethod.GetType();
             Type substitutedType = toStringMethodType.GenericTypeArguments[0];
+
+            ValidateDelegate(name: value.Name, actualType: value.Type, substitutedType: substitutedType);
+
             Type substituteValueType = typeof(SubstituteValue<>)
                 .MakeGenericType(new Type[] { substitutedType });
             ConstructorInfo constructor = substituteValueType
                 .GetConstructor(new Type[] { typeof(IValue), toStringMethodType });
 
             return (IValue)constructor.Invoke(new object[] { value, substituteMethod });
+        }
+
+        private static void ValidateDelegate(string name, Type actualType, Type substitutedType)
+        {
+            if (!substitutedType.IsAssignableFrom(actualType))
+            {
+                throw new InvalidOperationException(
+                    $"Cannot substitute member named \"{name}\" because can't be converted from " +
+                    $"type \"{actualType.Name}\" to type \"{substitutedType.Name}\""
+                );
+            }
         }
     }
 

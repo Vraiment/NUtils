@@ -167,15 +167,14 @@ namespace NUtils.MethodBuilders
 
         private void ValidateSubstitutions()
         {
-            foreach (KeyValuePair<string, Delegate> namedSubstitute in namedSubstitutes)
+            foreach (string substituteName in namedSubstitutes.Keys)
             {
-                ValidateNamedSubstitute(namedSubstitute.Key, namedSubstitute.Value.GetType());
+                ValidateNamedSubstitute(substituteName);
             }
         }
 
-        private static void ValidateNamedSubstitute(string name, Type toStringMethodType)
+        private static void ValidateNamedSubstitute(string name)
         {
-            Type substitutionType = toStringMethodType.GenericTypeArguments[0];
             PropertyInfo property = typeof(T)
                 .GetProperty(name);
 
@@ -183,13 +182,6 @@ namespace NUtils.MethodBuilders
             {
                 throw new InvalidOperationException(
                     $"Cannot substitute member named \"{name}\" because it doesn't exists in type \"{typeof(T).Name}\""
-                );
-            }
-            else if (!substitutionType.IsAssignableFrom(property.PropertyType))
-            {
-                throw new InvalidOperationException(
-                    $"Cannot substitute member named \"{name}\" because can't be converted from " +
-                    $"type \"{property.PropertyType.Name}\" to type \"{substitutionType.Name}\""
                 );
             }
         }
