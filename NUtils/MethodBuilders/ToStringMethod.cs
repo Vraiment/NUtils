@@ -40,9 +40,23 @@ namespace NUtils.MethodBuilders
     {
         private bool useProperties = false;
 
+        private bool useFields = false;
+
         private readonly HashSet<string> ignoredMembers = new HashSet<string>();
 
         private readonly Dictionary<string, Delegate> namedSubstitutes = new Dictionary<string, Delegate>();
+
+        /// <summary>
+        /// Signals the method builder should use the fields in the type.
+        /// </summary>
+        /// 
+        /// <returns>The same instance of <see cref="ToStringMethodBuilder{T}"/>.</returns>
+        public ToStringMethodBuilder<T> UseFields()
+        {
+            useFields = true;
+
+            return this;
+        }
 
         /// <summary>
         /// Signals the method builder should use the properties in the type.
@@ -126,6 +140,11 @@ namespace NUtils.MethodBuilders
 
             List<IValue> values = new List<IValue>();
 
+            if (useFields)
+            {
+                values.AddRange(GetFieldsAsValues());
+            }
+
             if (useProperties)
             {
                 values.AddRange(GetPropertiesAsValues());
@@ -143,15 +162,20 @@ namespace NUtils.MethodBuilders
 
         private IEnumerable<IValue> GetPropertiesAsValues() => typeof(T)
             .GetProperties()
-            .Where(ShouldIgnoreProperty)
+            .Where(property => !ShouldIgnoreMember(property))
             .Select(property => new PropertyValue(property));
 
-        private bool ShouldIgnoreProperty(PropertyInfo property)
-            => property.GetCustomAttribute<ToStringMethodIgnore>() == null && !ignoredMembers.Contains(property.Name);
+        private IEnumerable<IValue> GetFieldsAsValues() => typeof(T)
+            .GetFields()
+            .Where(field => !ShouldIgnoreMember(field))
+            .Select(field => new FieldValue(field));
+
+        private bool ShouldIgnoreMember(MemberInfo member)
+            => member.GetCustomAttribute<ToStringMethodIgnore>() != null || ignoredMembers.Contains(member.Name);
 
         private void ValidateUseAnything()
         {
-            if (!useProperties)
+            if (!useProperties && !useFields)
             {
                 throw new InvalidOperationException(
                     $"No member to use in {typeof(ToStringMethod<T>).Name}"
@@ -161,13 +185,21 @@ namespace NUtils.MethodBuilders
 
         private void ValidateIgnoredMembers()
         {
-            HashSet<string> propertyNames = new HashSet<string>(
-                typeof(T).GetProperties().Select(property => property.Name)
-            );
+            ISet<string> memberNames = new HashSet<string>();
+
+            foreach (FieldInfo field in typeof(T).GetFields())
+            {
+                memberNames.Add(field.Name);
+            }
+
+            foreach (PropertyInfo property in typeof(T).GetProperties())
+            {
+                memberNames.Add(property.Name);
+            }
 
             foreach (string ignoredMember in ignoredMembers)
             {
-                if (!propertyNames.Contains(ignoredMember))
+                if (!memberNames.Contains(ignoredMember))
                 {
                     throw new InvalidOperationException(
                         $"Cannot ignore member named \"{ignoredMember}\" because it doesn't " +

@@ -20,6 +20,23 @@ namespace NUtils.MethodBuilders
         Expression BuildExpression(Expression source);
     }
 
+    internal sealed class FieldValue : IValue
+    {
+        private readonly FieldInfo field;
+
+        public FieldValue(FieldInfo field)
+        {
+            this.field = field;
+        }
+
+        public string Name => field.Name;
+
+        public Type Type => field.FieldType;
+
+        public Expression BuildExpression(Expression source)
+            => Expression.Field(source, field);
+    }
+
     internal sealed class PropertyValue : IValue
     {
         private readonly PropertyInfo property;

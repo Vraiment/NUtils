@@ -11,12 +11,33 @@ using NUtils.MethodBuilders;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NUtils.Tests.MethodBuilders
 {
     class ToStringTests
     {
         #region Use nothing test cases
+        [Test]
+        public void Test_ToString_Method_Using_At_Least_Fields()
+        {
+            Action action = () => new ToStringMethodBuilder<object>()
+                .UseFields()
+                .Build();
+
+            action.Should().NotThrow();
+        }
+
+        [Test]
+        public void Test_ToString_Method_Using_At_Least_Properties()
+        {
+            Action action = () => new ToStringMethodBuilder<object>()
+                .UseProperties()
+                .Build();
+
+            action.Should().NotThrow();
+        }
+
         [Test]
         public void Test_ToString_Method_Without_Using_Anything()
         {
@@ -45,6 +66,31 @@ namespace NUtils.Tests.MethodBuilders
         class EmptyClass
         {
         }
+        #endregion
+
+        #region Fields test cases
+        [TestCaseSource(nameof(FieldTestCases))]
+        public void Test_ToString_Method_For_Type_With_Fields<T>(TestCase<T> testCase)
+            => testCase.Execute(builder => builder.UseFields());
+
+        static object[] FieldTestCases() => new object[]
+        {
+            TestCase.ForField<int>(
+                instance: 91,
+                expected: "{value=91}",
+                description: "Creating a string for a class with an int field with value \"91\""
+            ),
+            TestCase.ForField<char>(
+                instance: '\'',
+                expected: "{value='\\''}",
+                description: "Creating a string for a class with a char field with value \"\\'\""
+            ),
+            TestCase.ForField<string>(
+                instance: "a string",
+                expected: "{value=\"a string\"}",
+                description: "Creating a string for a class with a string field with value \"a string\""
+            )
+        };
         #endregion
 
         #region Primitive test cases
@@ -421,6 +467,19 @@ namespace NUtils.Tests.MethodBuilders
         #endregion
 
         #region Common types
+        class FieldOfType<T>
+        {
+            public T value;
+
+            public FieldOfType(T value)
+            {
+                this.value = value;
+            }
+
+            public static implicit operator FieldOfType<T>(T value)
+                => new FieldOfType<T>(value);
+        }
+
         class PropertyOfType<T>
         {
             public PropertyOfType(T value)
@@ -436,6 +495,13 @@ namespace NUtils.Tests.MethodBuilders
 
         class TestCase
         {
+            public static TestCase<FieldOfType<T>> ForField<T>(T instance, string expected, string description)
+                => new TestCase<FieldOfType<T>>(instance, expected, description);
+
+            public static TestCase<FieldOfType<T>> ForField<T>(
+                T instance, string expected, string description, Action<ToStringMethodBuilder<FieldOfType<T>>> configuration
+            ) => new TestCase<FieldOfType<T>>(instance, expected, description, configuration);
+
             public static TestCase<PropertyOfType<T>> ForProperty<T>(T instance, string expected, string description)
                 => new TestCase<PropertyOfType<T>>(instance, expected, description);
 
