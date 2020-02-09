@@ -16,6 +16,19 @@ namespace NUtils.Tests.MethodBuilders
 {
     class ToStringTests
     {
+        #region Use nothing test cases
+        [Test]
+        public void Test_ToString_Method_Without_Using_Anything()
+        {
+            Action action = () => new ToStringMethodBuilder<object>()
+                .Build();
+
+            action.Should()
+                .ThrowExactly<InvalidOperationException>()
+                .WithMessage($"No member to use in {typeof(ToStringMethod<object>).Name}");
+        }
+        #endregion
+
         #region Class without values test cases
         [Test]
         public void Test_ToString_Method_With_A_Class_Without_Values()
@@ -221,6 +234,7 @@ namespace NUtils.Tests.MethodBuilders
         {
             string falseName = nameof(falseName);
             Action action = () => new ToStringMethodBuilder<object>()
+                .UseProperties()
                 .Substitute<object>(falseName, _ => string.Empty)
                 .Build();
 
@@ -303,6 +317,7 @@ namespace NUtils.Tests.MethodBuilders
         public void Test_ToString_Method_Ignoring_Unexisting_Property()
         {
             Action action = () => new ToStringMethodBuilder<object>()
+                .UseProperties()
                 .Ignore(nameof(action))
                 .Build();
 

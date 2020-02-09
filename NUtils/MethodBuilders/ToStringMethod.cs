@@ -121,6 +121,7 @@ namespace NUtils.MethodBuilders
         /// </returns>
         public ToStringMethod<T> Build()
         {
+            ValidateUseAnything();
             ValidateIgnoredMembers();
 
             List<IValue> values = new List<IValue>();
@@ -147,6 +148,16 @@ namespace NUtils.MethodBuilders
 
         private bool ShouldIgnoreProperty(PropertyInfo property)
             => property.GetCustomAttribute<ToStringMethodIgnore>() == null && !ignoredMembers.Contains(property.Name);
+
+        private void ValidateUseAnything()
+        {
+            if (!useProperties)
+            {
+                throw new InvalidOperationException(
+                    $"No member to use in {typeof(ToStringMethod<T>).Name}"
+                );
+            }
+        }
 
         private void ValidateIgnoredMembers()
         {
