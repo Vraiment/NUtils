@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Useful utility methods and classes for C#.</Description>
     <Authors>Vraiment</Authors>
-    <Version>1.1.1</Version>
+    <Version>1.2.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug Signed|AnyCPU'">
