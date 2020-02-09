@@ -160,8 +160,7 @@ namespace NUtils.MethodBuilders
             return toStringExpression.Compile();
         }
 
-        private IEnumerable<IValue> GetPropertiesAsValues() => typeof(T)
-            .GetProperties()
+        private IEnumerable<IValue> GetPropertiesAsValues() => GetProperties()
             .Where(property => !ShouldIgnoreMember(property))
             .Select(property => new PropertyValue(property));
 
@@ -192,7 +191,7 @@ namespace NUtils.MethodBuilders
                 memberNames.Add(field.Name);
             }
 
-            foreach (PropertyInfo property in typeof(T).GetProperties())
+            foreach (PropertyInfo property in GetProperties())
             {
                 memberNames.Add(property.Name);
             }
@@ -236,6 +235,10 @@ namespace NUtils.MethodBuilders
                 return value;
             }
         }
+
+        private static IEnumerable<PropertyInfo> GetProperties() => typeof(T)
+            .GetProperties()
+            .Where(property => property.GetMethod?.IsPublic ?? false);
     }
 
     /// <summary>

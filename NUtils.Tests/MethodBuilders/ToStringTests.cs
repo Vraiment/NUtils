@@ -439,6 +439,36 @@ namespace NUtils.Tests.MethodBuilders
         };
         #endregion
 
+        #region Visiblity tests cases
+        [Test]
+        public void Test_ToString_Method_With_A_Class_With_Private_And_Internal_Members()
+        {
+            var toString = new ToStringMethodBuilder<ClassWithMembersWithDifferentAccess>()
+                .UseFields()
+                .UseProperties()
+                .Build();
+
+            string result = toString(new ClassWithMembersWithDifferentAccess());
+
+            result.Should().Be("{}");
+        }
+
+        class ClassWithMembersWithDifferentAccess
+        {
+            private string privateField => nameof(privateField);
+
+            internal string internalField => nameof(internalField);
+
+            internal string InternalProperty { get => nameof(InternalProperty); set { } }
+
+            private string PrivateProperty { get => nameof(PrivateProperty); set { } }
+
+            public string InternalGetter { internal get => nameof(InternalGetter); set { } }
+
+            public string PrivateGetter { private get => nameof(PrivateGetter); set { } }
+        }
+        #endregion
+
         #region Class with multiple values test cases
         [Test]
         public void Test_ToString_MethodWith_A_Class_With_Multiple_Values()
