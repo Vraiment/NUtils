@@ -226,7 +226,28 @@ namespace NUtils.Tests.MethodBuilders
 
             action.Should()
                 .ThrowExactly<InvalidOperationException>()
-                .WithMessage($"Cannot substitute member named \"{falseName}\" because it doesn't exists in type \"{typeof(object).Name}\"");
+                .WithMessage(
+                    $"Cannot substitute member named \"{falseName}\" because " +
+                    $"it doesn't exists in type \"{typeof(object).Name}\" or was ignored"
+                );
+        }
+
+        [Test]
+        public void Test_Substituting_An_Ignored_Member()
+        {
+            string name = nameof(PropertyOfType<int>.Value);
+            Action action = () => new ToStringMethodBuilder<PropertyOfType<int>>()
+                .UseProperties()
+                .Ignore(name)
+                .Substitute<int>(name, _ => string.Empty)
+                .Build();
+
+            action.Should()
+                .ThrowExactly<InvalidOperationException>()
+                .WithMessage(
+                    $"Cannot substitute member named \"{name}\" because " +
+                    $"it doesn't exists in type \"{typeof(PropertyOfType<int>).Name}\" or was ignored"
+                );
         }
 
         [Test]

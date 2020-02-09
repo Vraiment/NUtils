@@ -121,7 +121,6 @@ namespace NUtils.MethodBuilders
         /// </returns>
         public ToStringMethod<T> Build()
         {
-            ValidateSubstitutions();
             ValidateIgnoredMembers();
 
             List<IValue> values = new List<IValue>();
@@ -130,6 +129,8 @@ namespace NUtils.MethodBuilders
             {
                 values.AddRange(GetPropertiesAsValues());
             }
+
+            ValidateSubstitutions(values);
 
             Expression<ToStringMethod<T>> toStringExpression = new ToStringExpressionBuilder()
                 .WithValues(values.Select(SubstituteIfNeeded))
@@ -165,24 +166,19 @@ namespace NUtils.MethodBuilders
             }
         }
 
-        private void ValidateSubstitutions()
+        private void ValidateSubstitutions(IEnumerable<IValue> values)
         {
-            foreach (string substituteName in namedSubstitutes.Keys)
-            {
-                ValidateNamedSubstitute(substituteName);
-            }
-        }
+            ISet<string> valueNames = new HashSet<string>(values.Select(value => value.Name));
 
-        private static void ValidateNamedSubstitute(string name)
-        {
-            PropertyInfo property = typeof(T)
-                .GetProperty(name);
-
-            if (property == null)
+            foreach (string substitutedName in namedSubstitutes.Keys)
             {
-                throw new InvalidOperationException(
-                    $"Cannot substitute member named \"{name}\" because it doesn't exists in type \"{typeof(T).Name}\""
-                );
+                if (!valueNames.Contains(substitutedName))
+                {
+                    throw new InvalidOperationException(
+                        $"Cannot substitute member named \"{substitutedName}\" because it " +
+                        $"doesn't exists in type \"{typeof(T).Name}\" or was ignored"
+                    );
+                }
             }
         }
 
